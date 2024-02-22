@@ -2,6 +2,7 @@ require('dotenv').config();
 const mongoose = require('mongoose');
 const express = require('express');
 const User = require('./models/user');
+const Roadmap=require('./models/roadmap');
 // const user = require('./models/user');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -12,23 +13,22 @@ const port = 3000;
 
 app.use(express.urlencoded({extended: true}));
 
-console.log(process.env); // Check if your MongoDB URI is present in your environment variables
+
 
 const uri = process.env.MONGODB_URI;
 
-console.log(uri); 
 
-mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(uri)
   .then(() => {
     console.log('Mongoose is successfully connected');
 
   })
   .catch((err) => {
     console.log(`${err} --> Error Found in connecting.`);
-  });
+});
 
-  
-  
+
+
 
 
 
@@ -36,7 +36,6 @@ app.post('/signup', async (req,res) => {
     const {email,username, password, dob, topic, XP,  streak} = req.body;
 
     const hash = await bcrypt.hash(password, 12);
-    // console.log(salt);
     try {
         const userDoc = await new User({
             email,
@@ -52,6 +51,85 @@ app.post('/signup', async (req,res) => {
         res.status(400).json(error);    
     }
 })
+
+
+// app.post("/roadmap/graphql", async (req,res) => {
+//   try {
+//     const graphqlDoc= new Roadmap({
+//       topic:"GraphQl",
+//       roadmap:                    
+//       })
+//     await graphqlDoc.save()
+//     console.log('Done');
+//   } catch (error) {
+//     res.status(400).json(error)
+//   }
+// })
+
+// app.post("/roadmap/aws", async (req,res) => {
+//   try {
+//     const awsDoc= new Roadmap({
+//       topic:"AWS",
+//       roadmap:                    
+//       })
+//     await awsDoc.save()
+//     console.log('Done');
+//   } catch (error) {
+//     res.status(400).json(error)
+//   }
+// })
+
+// app.post("/roadmap/docker", async (req,res) => {
+//   try {
+//     const dockerDoc= new Roadmap({
+//       topic:"Docker",
+//       roadmap:                    
+//       })
+//     await dockerDoc.save()
+//     console.log('Done');
+//   } catch (error) {
+//     res.status(400).json(error)
+//   }
+// })
+
+// app.post("/roadmap/kubernetes", async (req,res) => {
+//   try {
+//     const kuberDoc= new Roadmap({
+//       topic:"Kubernetes",
+//       roadmap:                    
+//       })
+//     await kuberDoc.save()
+//     console.log('Done');
+//   } catch (error) {
+//     res.status(400).json(error)
+//   }
+// })
+
+// app.post("/roadmap/mongodb", async (req,res) => {
+//   try {
+//     const mongoDoc= new Roadmap({
+//       topic:"MongoDB",
+//       roadmap:                    
+//       })
+//     await mongoDoc.save()
+//     console.log('Done');
+//   } catch (error) {
+//     res.status(400).json(error)
+//   }
+// })
+
+// app.post("/roadmap/promptengineering", async (req,res) => {
+//   try {
+//     const promptDoc= new Roadmap({
+//       topic:"PromptEngineering",
+//       roadmap:                    
+//       })
+//     await promptDoc.save()
+//     console.log('Done');
+//   } catch (error) {
+//     res.status(400).json(error)
+//   }
+// })
 
 app.post("/login" , async (req,res) => {
     const {username,password}=req.body;
