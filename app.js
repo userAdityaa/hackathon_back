@@ -5,8 +5,9 @@ const User = require('./models/user');
 const Roadmap=require('./models/roadmap');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const roadmap = require('./models/roadmap');
 const app = express();
-const port = 8000;
+const port = 3000;
 
 
 app.use(express.urlencoded({extended: true}));
@@ -51,21 +52,32 @@ app.post('/signup', async (req,res) => {
 
 
 app.post("/login" , async (req,res) => {
-    const {username,password}=req.body;
-    const userDoc=await User.findOne({username:username});
-    console.log(userDoc);
-    const validPassword = await bcrypt.compare(password, userDoc.password);
-    console.log(validPassword);
-    if(validPassword){
-        const token = jwt.sign({username,id:userDoc._id},"hackathon-secret-key",{})
-        res.json({token});
+    const {email, password}=req.body;
+    try{
+        const userDoc = await User.findOne({email: email});
+
+        const validPassword = await bcrypt.compare(password, userDoc.password);
+        console.log(validPassword);
+        if(validPassword){
+            const token = jwt.sign({email,id:userDoc._id},"hackathon-secret-key",{})
+            res.json({token});
+            console.log("User Logged in");
+        }
+        else{
+            res.status(400).json('Wrong Credentials')
+        }
     }
-    else{
-        res.status(400).json('Wrong Credentials')
+    catch(e){
+        res.status(401).json('User Not Found');
     }
 })
 
 
+app.get('/user/topic/:id', async(req, res) => {
+    const {id} = req.params;
+    const topic = await Roadmap.findOne({_id: id});
+    res.json(topic.roadmap.days);
+})
 
 app.post('/logout', async(req,res) => {
     try {
