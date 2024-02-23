@@ -6,6 +6,7 @@ const Roadmap=require('./models/roadmap');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const roadmap = require('./models/roadmap');
+// const Leaderboard = require('./models/leaderboard');
 const app = express();
 const port = 3000;
 
@@ -72,6 +73,12 @@ app.post("/login" , async (req,res) => {
     }
 })
 
+app.get('/user/choices', async(req, res) => {
+    const topics = await Roadmap.find({});
+    res.send(topics);
+})
+
+
 
 app.get('/user/topic/:id', async(req, res) => {
     const {id} = req.params;
@@ -92,20 +99,24 @@ app.post('/logout', async(req,res) => {
     }
 })
 
-app.get('/topics', (req,res) => {
-    let topicObj=[{}];
-    Roadmap.find({})
-    .then((docs) => {
-        docs.map((res) => {
-            topicObj=[...topicObj,{id:res._id,topic:res.topic}]
-        })
-        let filteredTopics = topicObj.filter(obj => Object.keys(obj).length !== 0);
-        res.json(filteredTopics); 
-    }
-    )
-    .catch((err) => console.log(err)); 
+// app.get('/topics', (req,res) => {
+//     let topicObj=[{}];
+//     Roadmap.find({})
+//     .then((docs) => {
+//         docs.map((res) => {
+//             topicObj=[...topicObj,{id:res._id,topic:res.topic}]
+//         })
+//         let filteredTopics = topicObj.filter(obj => Object.keys(obj).length !== 0);
+//         res.json(filteredTopics); 
+//     }
+//     )
+//     .catch((err) => console.log(err)); 
      
-})
+// })
+
+// app.get('/leaderboard', (req, res) => {
+
+// })
 
 app.listen(port, () => {
     console.log(`Listening to port ${port}.`)
